@@ -34,7 +34,9 @@ class CflowLineParser(BaseLineParser):
         function_name = re.search(r"(\w+\(\))", function_info).group(0)
         self._function_name = function_name[:function_name.index('(')]
 
-        match = re.search(r"(?:at\s)(\..*)(?::\d+>)", function_info)
+        match = re.search(r"at (.*?)(?::\d+>)", function_info)
+        print(function_info)
+        print(match)
         if match:
             self._function_signature = match.group(1)
 

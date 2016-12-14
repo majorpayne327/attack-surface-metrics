@@ -1,0 +1,25 @@
+main() <int main (void) at test.c:57>:
+    hello_athens() <void hello_athens () at test.c:15>:
+        say_hello() <void say_hello (char *s) at test.c:10>:
+            printf()
+    fly() <void fly () at test.c:35>:
+        take_off() <void take_off () at test.c:20>:
+            printf()
+        cruise() <void cruise () at test.c:25>:
+            printf()
+        land() <void land () at test.c:30>:
+            printf()
+    hello_paris() <void hello_paris () at test.c:42>:
+        say_hello() <void say_hello (char *s) at test.c:10>:
+            printf()
+    hello_los_angeles() <void hello_los_angeles () at test.c:47>:
+        say_hello() <void say_hello (char *s) at test.c:10>:
+            printf()
+    back() <void back () at test.c:52>:
+        fly() <void fly () at test.c:35>:
+            take_off() <void take_off () at test.c:20>:
+                printf()
+            cruise() <void cruise () at test.c:25>:
+                printf()
+            land() <void land () at test.c:30>:
+                printf()

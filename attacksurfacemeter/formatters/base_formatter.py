@@ -76,7 +76,8 @@ class BaseFormatter(object):
                 {
                     'function_name': c.function_name,
                     'function_signature': BaseFormatter._get_signature(c),
-                    'degree': self.call_graph.get_degree(c)
+                    'degree': self.call_graph.get_degree(c),
+                    'walk':self.call_graph.get_page_rank(c)
                 } for (c, attrs) in self.call_graph.nodes
             ],
             'edges_count': len(self.call_graph.edges),

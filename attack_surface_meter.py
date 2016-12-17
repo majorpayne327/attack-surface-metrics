@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import math
 import pdb
 from PIL import Image
 from attacksurfacemeter.call_graph import CallGraph
@@ -79,8 +80,9 @@ def main():
                         nodes[curnode._function_signature].append(curnode)
                     else:
                         nodes[curnode._function_signature] = [curnode]"""
-            plt.figure(figsize=(25, 25))
-            cg = call_graph.call_graph
+            plt.figure(num=None, figsize=(150, 150), dpi=100)
+            critical_graph = call_graph.get_critical_graph()
+
             """data = json_graph.node_link_data(cg)
             e = json.dumps(data)
             print(e)
@@ -95,14 +97,19 @@ def main():
             nx.draw_networkx_labels(cg,pos=nx.spring_layout(cg))"""
             #.draw(cg)
 
-            nx.draw_networkx(cg, pos=nx.spring_layout(cg), with_labels=True)
+            pos = nx.spring_layout(critical_graph)
+            draw_nodes(call_graph, critical_graph, pos)
+            draw_edges(critical_graph, pos)
+            draw_labels(critical_graph, pos)
+
+            plt.show()
             #for inp in call_graph.entry_points:
             #    nx.draw_networkx_edges(cg,pos=nx.spring_layout,edgelist=[()])
-            plt.savefig('gtest.png')
+            #plt.savefig('gtest.png')
             #plt.show()
-            plt.clf()
-            img = Image.open('gtest.png')
-            img.show()
+            #plt.clf()
+            #img = Image.open('gtest.png')
+            #img.show()
 
             print("drew graph")
 
@@ -136,10 +143,41 @@ def main():
             sys.stdout.write(error)
 
 
+def draw_nodes(call_graph, critical_graph, pos):
+
+    node_colors = []
+    for node in critical_graph.nodes():
+        if (node in call_graph.entry_points) and (node in call_graph.exit_points):
+            node_colors.append('orange')
+        elif node in call_graph.entry_points:
+            node_colors.append('blue')
+        elif node in call_graph.exit_points:
+            node_colors.append('red')
+        else:
+            node_colors.append('grey')
+
+    nx.draw_networkx_nodes(critical_graph, pos=pos, scale=8, node_size=[10 * len(critical_graph.nodes())], node_color=node_colors)
+
+
+def draw_edges(critical_graph, pos):
+    nx.draw_networkx_edges(critical_graph, pos=pos, edge_color=['grey' for edge in critical_graph.edges()])
+
+
+def draw_labels(critical_graph, pos):
+    labels = {}
+    node_id = 0
+    for node in critical_graph:
+        labels[node] = node_id
+        print("{0}: {1}".format(node_id, node.identity))
+        node_id += 1
+
+    nx.draw_networkx_labels(critical_graph, pos=pos, labels=labels, font_size=12)
+
+
 def parse_args():
     '''Parse command line arguments.
 
-    Parameters
+    Parameers
     ----------
     None
 

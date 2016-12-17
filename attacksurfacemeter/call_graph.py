@@ -616,3 +616,15 @@ class CallGraph():
                 weight += weights.get('vulnerable', 0)
 
             self.call_graph.edge[caller][callee]['weight'] = weight
+
+    def get_critical_graph(self):
+
+        critical_graph = nx.DiGraph()
+
+        critical_nodes = self.entry_points + self.exit_points
+
+        for edge in self.edges:
+            if(edge[0] in critical_nodes) or (edge[1] in critical_nodes):
+                critical_graph.add_edge(edge[0], edge[1]);
+
+        return critical_graph

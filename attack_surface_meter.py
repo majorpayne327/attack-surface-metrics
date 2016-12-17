@@ -165,7 +165,7 @@ def draw_nodes(call_graph, critical_graph, pos):
         else:
             node_colors.append('grey')
 
-    nx.draw_networkx_nodes(critical_graph, pos=pos, scale=8, node_size=[10 * len(critical_graph.nodes())], node_color=node_colors)
+    nx.draw_networkx_nodes(critical_graph, pos=pos, scale=8, node_size=[600], node_color=node_colors)
 
 
 def draw_edges(critical_graph, pos):

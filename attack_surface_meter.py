@@ -1,7 +1,8 @@
 import argparse
 import os
 import sys
-
+import pdb
+from PIL import Image
 from attacksurfacemeter.call_graph import CallGraph
 from attacksurfacemeter.granularity import Granularity
 from attacksurfacemeter.loaders.cflow_loader import CflowLoader
@@ -11,7 +12,12 @@ from attacksurfacemeter.loaders.javacg_loader import JavaCGLoader
 from attacksurfacemeter.formatters.txt_formatter import TxtFormatter
 from attacksurfacemeter.formatters.xml_formatter import XmlFormatter
 from attacksurfacemeter.formatters.html_formatter import HtmlFormatter
-
+import matplotlib.pyplot as plt
+from networkx.readwrite import json_graph
+import networkx as nx
+import hashlib
+import random
+import json
 
 FORMATTERS = {
     'txt': TxtFormatter, 'xml': XmlFormatter, 'html': HtmlFormatter
@@ -67,6 +73,39 @@ def main():
             call_graph = CallGraph.from_loader(
                     cflow_loader, granularity=args.granularity
                 )
+            """nodes = []
+            for curnode in call_graph.call_graph.nodes():
+                    if curnode._function_signature in nodes:
+                        nodes[curnode._function_signature].append(curnode)
+                    else:
+                        nodes[curnode._function_signature] = [curnode]"""
+            plt.figure(figsize=(25, 25))
+            cg = call_graph.call_graph
+            """data = json_graph.node_link_data(cg)
+            e = json.dumps(data)
+            print(e)
+            H = json_graph.node_link_graph(data,directed=True)"""
+            """"for nodekey in nodes:
+                random.seed(nodekey)
+                nlist = nodes[nodekey]
+                col = float.fromhex('0.' + hashlib.md5(nodekey).hexdigest())
+                nx.draw_networkx_nodes(cg,size=600, pos=nx.spring_layout(cg),
+                                       nodelist=nlist, node_color=[random.random(),random.random(),random.random()])
+            nx.draw_networkx_edges(cg,pos=nx.spring_layout(cg),edgelist=cg.edges())
+            nx.draw_networkx_labels(cg,pos=nx.spring_layout(cg))"""
+            #.draw(cg)
+
+            nx.draw_networkx(cg, pos=nx.spring_layout(cg), with_labels=True)
+            for inp in call_graph.entry_points:
+                nx.draw_networkx_edges(cg,pos=nx.spring_layout,edgelist=[()])
+            plt.savefig('gtest.png')
+            #plt.show()
+            plt.clf()
+            img = Image.open('gtest.png')
+            img.show()
+
+            print("drew graph")
+
         elif gprof_loader:
             call_graph = CallGraph.from_loader(
                     gprof_loader, granularity=args.granularity

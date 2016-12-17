@@ -96,8 +96,8 @@ def main():
             #.draw(cg)
 
             nx.draw_networkx(cg, pos=nx.spring_layout(cg), with_labels=True)
-            for inp in call_graph.entry_points:
-                nx.draw_networkx_edges(cg,pos=nx.spring_layout,edgelist=[()])
+            #for inp in call_graph.entry_points:
+            #    nx.draw_networkx_edges(cg,pos=nx.spring_layout,edgelist=[()])
             plt.savefig('gtest.png')
             #plt.show()
             plt.clf()

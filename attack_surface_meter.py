@@ -148,11 +148,20 @@ def draw_nodes(call_graph, critical_graph, pos):
     node_colors = []
     for node in critical_graph.nodes():
         if (node in call_graph.entry_points) and (node in call_graph.exit_points):
-            node_colors.append('orange')
-        elif node in call_graph.entry_points:
-            node_colors.append('blue')
+            if node.is_dangerous:
+                node_colors.append('brown')
+            else:
+                node_colors.append('red')
         elif node in call_graph.exit_points:
-            node_colors.append('red')
+            if node.is_dangerous:
+                node_colors.append('orange')
+            else:
+                node_colors.append('yellow')
+        elif node in call_graph.entry_points:
+            if node.is_dangerous:
+                node_colors.append('green')
+            else:
+                node_colors.append('blue')
         else:
             node_colors.append('grey')
 

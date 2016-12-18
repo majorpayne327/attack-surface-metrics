@@ -58,12 +58,11 @@ class BaseFormatter(object):
             for (c, attrs) in self.call_graph.nodes:
                 dangerdict = self.call_graph.get_shortest_path_length(c, 'dangerous')
                 if dangerdict is not None:
-                    for key, value in dangerdict.iteritems():
+                    for key, value in dangerdict.items():
                         sumNodes += value
                         countnodes += 1
             meandanger = sumNodes / countnodes
 
-        template = BaseFormatter._get_template(self.template_file)
         context = Context({
             'directory': self.call_graph.source,
             'nodes_count': len(self.call_graph.nodes),
@@ -86,7 +85,7 @@ class BaseFormatter(object):
         for (c, attrs) in self.call_graph.nodes:
             dangerdict = self.call_graph.get_shortest_path_length(c,'dangerous')
             if dangerdict is not None:
-                for key, value in dangerdict.iteritems():
+                for key, value in dangerdict.items():
                     sumNodes += value
                     countnodes += 1
         meandanger = sumNodes/countnodes
@@ -95,7 +94,7 @@ class BaseFormatter(object):
         for (c, attrs) in self.call_graph.nodes:
             exitdict = self.call_graph.get_shortest_path_length(c,'exit')
             if exitdict is not None:
-                for key, value in exitdict.iteritems():
+                for key, value in exitdict.items():
                     sumNodes += value
                     countnodes += 1
         meanexit = sumNodes/countnodes
@@ -104,7 +103,7 @@ class BaseFormatter(object):
         for (c, attrs) in self.call_graph.nodes:
             enterdict = self.call_graph.get_shortest_path_length(c,'entry')
             if enterdict is not None:
-                for key, value in enterdict.iteritems():
+                for key, value in enterdict.items():
                     sumNodes += value
                     countnodes += 1
         meanenter = sumNodes / countnodes

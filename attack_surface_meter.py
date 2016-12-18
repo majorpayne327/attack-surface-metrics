@@ -80,7 +80,7 @@ def main():
                         nodes[curnode._function_signature].append(curnode)
                     else:
                         nodes[curnode._function_signature] = [curnode]"""
-            plt.figure(num=None, figsize=(150, 150), dpi=100)
+            plt.figure(num=None, figsize=(15, 15), dpi=100)
             critical_graph = call_graph.get_critical_graph()
 
             """data = json_graph.node_link_data(cg)
@@ -95,23 +95,27 @@ def main():
                                        nodelist=nlist, node_color=[random.random(),random.random(),random.random()])
             nx.draw_networkx_edges(cg,pos=nx.spring_layout(cg),edgelist=cg.edges())
             nx.draw_networkx_labels(cg,pos=nx.spring_layout(cg))"""
-            #.draw(cg)
 
-            pos = nx.spring_layout(critical_graph)
-            draw_nodes(call_graph, critical_graph, pos)
-            draw_edges(critical_graph, pos)
-            draw_labels(critical_graph, pos)
+            cg = call_graph.call_graph
+            pos = nx.spring_layout(cg)
+            draw_nodes(call_graph, cg, pos)
+            draw_edges(cg, pos)
+            label_mapping = draw_labels_and_return_mapping(call_graph, cg, pos)
 
-            plt.show()
-            #for inp in call_graph.entry_points:
-            #    nx.draw_networkx_edges(cg,pos=nx.spring_layout,edgelist=[()])
-            #plt.savefig('gtest.png')
+            # pos = nx.spring_layout(critical_graph)
+            # draw_nodes(call_graph, critical_graph, pos)
+            # draw_edges(critical_graph, pos)
+            # label_mapping = draw_labels_and_return_mapping(call_graph, critical_graph, pos)
+
+            plt.savefig('{0}-visual.pdf'.format(args.cflow))
+
+            with open('{0}-data.txt'.format(args.cflow), "w") as f:
+                for item in label_mapping.items():
+                    f.write("{0}:\n".format(item[0]))
+                    f.write("\n".join(item[1]))
+                    f.write("\n\n")
+
             #plt.show()
-            #plt.clf()
-            #img = Image.open('gtest.png')
-            #img.show()
-
-            print("drew graph")
 
         elif gprof_loader:
             call_graph = CallGraph.from_loader(
@@ -147,21 +151,24 @@ def draw_nodes(call_graph, critical_graph, pos):
 
     node_colors = []
     for node in critical_graph.nodes():
+        node_is_dangerous = node in nx.get_node_attributes(call_graph.call_graph, 'dangerous').keys()
         if (node in call_graph.entry_points) and (node in call_graph.exit_points):
-            if node.is_dangerous:
+            if node_is_dangerous:
                 node_colors.append('brown')
             else:
                 node_colors.append('red')
         elif node in call_graph.exit_points:
-            if node.is_dangerous:
+            if node_is_dangerous:
                 node_colors.append('orange')
             else:
                 node_colors.append('yellow')
         elif node in call_graph.entry_points:
-            if node.is_dangerous:
+            if node_is_dangerous:
                 node_colors.append('green')
             else:
                 node_colors.append('blue')
+        elif node_is_dangerous:
+            node_colors.append('purple')
         else:
             node_colors.append('grey')
 
@@ -172,15 +179,25 @@ def draw_edges(critical_graph, pos):
     nx.draw_networkx_edges(critical_graph, pos=pos, edge_color=['grey' for edge in critical_graph.edges()])
 
 
-def draw_labels(critical_graph, pos):
+def draw_labels_and_return_mapping(call_graph, critical_graph, pos):
     labels = {}
     node_id = 0
+    label_mapping = {'Entry Points': [], 'Exit Points': [], 'Dangerous Functions': [], 'Functions': [],}
     for node in critical_graph:
         labels[node] = node_id
-        print("{0}: {1}".format(node_id, node.identity))
+        node_is_dangerous = node in nx.get_node_attributes(call_graph.call_graph, 'dangerous').keys()
+        if node in call_graph.entry_points:
+            label_mapping['Entry Points'].append("{0}: {1}".format(node_id, node.identity))
+        elif node in call_graph.exit_points:
+            label_mapping['Exit Points'].append("{0}: {1}".format(node_id, node.identity))
+        else:
+            label_mapping['Functions'].append("{0}: {1}".format(node_id, node.identity))
+        if node_is_dangerous:
+            label_mapping['Dangerous Functions'].append("{0}: {1}".format(node_id, node.identity))
         node_id += 1
 
     nx.draw_networkx_labels(critical_graph, pos=pos, labels=labels, font_size=12)
+    return label_mapping
 
 
 def parse_args():

@@ -51,7 +51,19 @@ class BaseFormatter(object):
 
     def write_summary(self):
         template = BaseFormatter._get_template(self.summary_template_file)
+        countnodes = 0
+        sumNodes = 0
+        meandanger = 0
+        if len(nx.get_node_attributes(self.call_graph.call_graph,'dangerous')) > 0:
+            for (c, attrs) in self.call_graph.nodes:
+                dangerdict = self.call_graph.get_shortest_path_length(c, 'dangerous')
+                if dangerdict is not None:
+                    for key, value in dangerdict.iteritems():
+                        sumNodes += value
+                        countnodes += 1
+            meandanger = sumNodes / countnodes
 
+        template = BaseFormatter._get_template(self.template_file)
         context = Context({
             'directory': self.call_graph.source,
             'nodes_count': len(self.call_graph.nodes),
@@ -62,13 +74,41 @@ class BaseFormatter(object):
                 len(nx.get_node_attributes(
                     self.call_graph.call_graph, 'dangerous'
                 )),
+            'distance_dangerous': meandanger,
+
         })
 
         return template.render(context)
 
     def write_output(self):
+        countnodes = 0
+        sumNodes = 0
+        for (c, attrs) in self.call_graph.nodes:
+            dangerdict = self.call_graph.get_shortest_path_length(c,'dangerous')
+            if dangerdict is not None:
+                for key, value in dangerdict.iteritems():
+                    sumNodes += value
+                    countnodes += 1
+        meandanger = sumNodes/countnodes
+        countnodes = 0
+        sumNodes = 0
+        for (c, attrs) in self.call_graph.nodes:
+            exitdict = self.call_graph.get_shortest_path_length(c,'exit')
+            if exitdict is not None:
+                for key, value in exitdict.iteritems():
+                    sumNodes += value
+                    countnodes += 1
+        meanexit = sumNodes/countnodes
+        countnodes = 0
+        sumNodes = 0
+        for (c, attrs) in self.call_graph.nodes:
+            enterdict = self.call_graph.get_shortest_path_length(c,'entry')
+            if enterdict is not None:
+                for key, value in enterdict.iteritems():
+                    sumNodes += value
+                    countnodes += 1
+        meanenter = sumNodes / countnodes
         template = BaseFormatter._get_template(self.template_file)
-
         context = Context({
             'directory': self.call_graph.source,
             'nodes_count': len(self.call_graph.nodes),
@@ -101,6 +141,9 @@ class BaseFormatter(object):
                 nx.get_node_attributes(
                     self.call_graph.call_graph, 'dangerous'
                 ).keys(),
+            'distance_dangerous': meandanger,
+            'distance_entry': meanenter,
+            'distance_exit':meanexit,
         })
 
         return template.render(context)

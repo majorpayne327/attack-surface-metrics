@@ -607,7 +607,7 @@ class CallGraph():
 
             callee_attrs = self.call_graph.node[callee]
             if 'dangerous' in callee_attrs:
-                weight += weights.get('dangerous', 0)
+                weight += weights.get('fous', 0)
             if 'defense' in callee_attrs:
                 weight += weights.get('defense', 0)
             if 'tested' in callee_attrs:

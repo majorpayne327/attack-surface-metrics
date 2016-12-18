@@ -19,7 +19,7 @@ Calls ({{ edges_count }})
 {% for edge in edges %}{{ edge.from|stringformat:"52s" }} | {{ edge.to|stringformat:"-52s" }}
 {% endfor %}{% else %}  No calls to show.{% endif %}
 
-Entry Points ({{ entry_points_count }})
+Entry Points ({{ entry_points_count }}) Mean Shortest Path ({{distance_entry}})
 ============================
 
 {% if entry_points_count > 0 %}| Name                                                 | File                                           |
@@ -27,7 +27,7 @@ Entry Points ({{ entry_points_count }})
 {% for i in entry_points %}| {{ i.function_name|stringformat:"-52s" }} | {{i.function_signature|stringformat:"-46s" }} |
 {% endfor %}{% else %}  No entry points to show.{% endif %}
 
-Exit Points ({{ exit_points_count}})
+Exit Points ({{ exit_points_count}}) Mean Shortest Path ({{distance_exit}})
 ============================
 
 {% if exit_points_count > 0 %}| Name                                                 | File                                           |
@@ -35,7 +35,7 @@ Exit Points ({{ exit_points_count}})
 {% for i in exit_points %}| {{ i.function_name|stringformat:"-52s" }} | {{i.function_signature|stringformat:"-46s" }} |
 {% endfor %}{% else %}  No exit points to show.{% endif %}
 
-Dangerous Functions ({{dangerous_functions_count }})
+Dangerous Functions ({{dangerous_functions_count }}) Mean Shortest Path ({{distance_dangerous}})
 ============================
 
 {% if dangerous_functions_count > 0 %}| Name                                                 | File                                           |
